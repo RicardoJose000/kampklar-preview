@@ -1,8 +1,8 @@
 import { db, save, session, currentUser, userByEmail, verifyPassword, issueCode, checkCode, lockedFor, loginFailed, loginOk, audit, childrenOf, consentsOf, consentStatus, ageClass, deleteFamily, userById, ADMIN_EMAIL, ADMIN_PASSWORD, CLUB_MAILBOX } from '../store.js';
-import { $, $$, esc, go, icon, toast, openModal, confirmBox, fieldError, clearErrors, formError, validEmail, bindPasswordUI, pwField, bindCodeInputs, codeInputsHTML, setBusy, fmtDate, fmtDateTime, initials, avatarStyle, download, demoNote, hasGsap, reduced } from '../ui.js';
+import { $, $$, esc, go, icon, toast, openModal, confirmBox, fieldError, clearErrors, formError, validEmail, bindPasswordUI, pwField, bindCodeInputs, codeInputsHTML, setBusy, fmtDate, fmtDateTime, initials, avatarStyle, download, demoNote, hasGsap, reduced, img, vid } from '../ui.js';
 import { sendMail, wrapMail, openInbox } from '../mail.js';
-import { enter, magnetic, countUp, drawSvg } from '../fx.js';
-import { COURT } from './home.js';
+import { enter, magnetic, countUp, autoVideos } from '../fx.js';
+
 
 const ST = { signed: ['ok', 'Signed'], missing: ['warn', 'Missing'], withdrawn: ['bad', 'Withdrawn'] };
 
@@ -15,10 +15,10 @@ export async function renderAdmin(main) {
 /* ---------------- two-step login ---------------- */
 function login(main) {
   main.innerHTML = `<div class="app-bg"></div>
-    <section class="admin-login" style="position:relative;overflow:hidden">${COURT}
+    <section class="admin-login">
+      <div class="bgphoto">${img('tactics')}</div>
       <div class="card auth-card" style="position:relative" id="al"></div>
     </section>`;
-  drawSvg($('.court', main), { duration: 2.4, stagger: .05 });
   const box = $('#al', main);
   let admin = null;
 
@@ -100,8 +100,9 @@ function dashboard(main, me) {
   main.innerHTML = `<div class="app-bg"></div>
   <section class="app" style="grid-template-columns:1fr">
     <div>
-      <div class="page-head">
-        <div><span class="eyebrow">Club admin</span><h1 style="margin-top:12px">Club dashboard</h1><p>Every family and player. Only admins who passed two-step login can see this.</p></div>
+      <div class="admin-hero">
+        ${vid('coach', { preload: 'auto' })}
+        <div><span class="eyebrow light">Club admin</span><h1 style="margin-top:12px">Club dashboard</h1><p>Every family and player. Only admins who passed two-step login can see this.</p></div>
         <div style="display:flex;gap:10px;flex-wrap:wrap">
           <button class="btn btn-ghost" id="csv" data-magnetic>${icon.download} Export CSV</button>
           <button class="btn btn-ghost" id="out">${icon.logout} Log out</button>
@@ -125,6 +126,7 @@ function dashboard(main, me) {
     </div>
   </section>`;
 
+  autoVideos(main);
   $('#out', main).addEventListener('click', () => { audit('Club Admin', 'Logged out'); session.clear(); toast('Logged out.'); go(''); });
   $('#csv', main).addEventListener('click', exportCsv);
   $('#q', main).addEventListener('input', e => { state.q = e.target.value.trim().toLowerCase(); table(); });
@@ -171,7 +173,7 @@ function dashboard(main, me) {
       const a = `<circle r="52" cx="70" cy="70" stroke="${cols[k]}" stroke-dasharray="${len} ${C - len}" stroke-dashoffset="${-off}"/>`;
       off += len; return a;
     }).join('');
-    $('#donut', main).innerHTML = `<svg viewBox="0 0 140 140" aria-hidden="true"><circle r="52" cx="70" cy="70" stroke="rgba(255,255,255,.06)"/>${arcs}</svg>
+    $('#donut', main).innerHTML = `<svg viewBox="0 0 140 140" aria-hidden="true"><circle r="52" cx="70" cy="70" stroke="rgba(11,27,54,.07)"/>${arcs}</svg>
       <div class="legend">${Object.entries(counts).map(([k, n]) => `<div><i style="background:${cols[k]}"></i>${ST[k][1]}<b>${n}</b></div>`).join('')}</div>`;
     if (animate && hasGsap() && !reduced()) {
       gsap.from('#bars i', { scaleY: 0, duration: 1.2, ease: 'expo.out', stagger: .07, delay: .2 });
@@ -227,7 +229,7 @@ function dashboard(main, me) {
         </div>
         ${kids.map(k => {
           const st = consentStatus(k.id), c = consentsOf(k.id)[0];
-          return `<div class="card panel" style="padding:18px;margin-bottom:10px;background:rgba(255,255,255,.03)">
+          return `<div class="card panel" style="padding:18px;margin-bottom:10px;background:var(--bg);box-shadow:none">
             <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap">
               <div class="pname" style="display:flex;gap:12px;align-items:center"><span class="av" style="${avatarStyle(k.id)};width:40px;height:40px">${esc(initials(k.first, k.last))}</span><div><b>${esc(k.first)} ${esc(k.last)}</b><small class="muted" style="display:block">${ageClass(k)} &middot; born ${fmtDate(k.dob)}</small></div></div>
               <span class="pill ${ST[st][0]}">${ST[st][1]}</span>

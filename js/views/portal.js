@@ -1,5 +1,5 @@
 import { db, save, uid, session, currentUser, childrenOf, consentsOf, consentStatus, activeConsent, ageClass, ageOf, hashPassword, verifyPassword, audit, deleteFamily, exportFor, CONSENT_VERSION, CLUB_MAILBOX } from '../store.js';
-import { $, $$, esc, go, icon, toast, openModal, confirmBox, fieldError, clearErrors, formError, pwScore, bindPasswordUI, pwField, setBusy, fmtDate, fmtDateTime, initials, avatarStyle, download } from '../ui.js';
+import { $, $$, esc, go, icon, toast, openModal, confirmBox, fieldError, clearErrors, formError, pwScore, bindPasswordUI, pwField, setBusy, fmtDate, fmtDateTime, initials, avatarStyle, download, img } from '../ui.js';
 import { sendMail, wrapMail } from '../mail.js';
 import { consentPdf, CONSENT_ITEMS } from '../pdf.js';
 import { enter, magnetic } from '../fx.js';
@@ -20,6 +20,7 @@ export async function renderPortal(main, [tab = 'children']) {
   main.innerHTML = `<div class="app-bg"></div>
   <section class="app">
     <aside class="card side">
+      <div class="side-media">${img('training')}<span>Season 2026/27</span></div>
       <div class="who"><span class="av" style="${avatarStyle(me.email)}">${esc(initials(me.first, me.last))}</span><div style="min-width:0"><b>${esc(me.first)} ${esc(me.last)}</b><small>${esc(me.email)}</small></div></div>
       <nav aria-label="Parent portal">
         ${TABS.map(([k, l, ic]) => `<a href="#/portal/${k}" class="${k === tab ? 'active' : ''}" ${k === tab ? 'aria-current="page"' : ''}>${ic}${l}</a>`).join('')}

@@ -248,3 +248,9 @@ export function setBusy(btn, busy) {
 }
 
 export const demoNote = text => `<div class="demo-note">${icon.info}<span>${text}</span></div>`;
+
+// media: self-hosted clips (muted, looped, played only while on screen) and photos
+export const vid = (name, { cls = '', preload = 'none' } = {}) =>
+  `<video class="${cls}" data-auto src="assets/video/${name}.mp4" poster="assets/video/${name}.jpg" muted loop playsinline preload="${preload}" aria-hidden="true"></video>`;
+export const img = (name, alt = '', attrs = '') =>
+  `<img src="assets/img/${name}.webp" alt="${alt}" loading="lazy" decoding="async" ${attrs}>`;

@@ -16,8 +16,22 @@ export function initCursor() {
   };
   tick();
   document.addEventListener('mouseover', e => {
-    c.classList.toggle('hover', !!e.target.closest('a, button, [data-hover], label, select, .tile, tr.click'));
+    const drag = !!e.target.closest('[data-drag]');
+    c.classList.toggle('play', drag);
+    c.classList.toggle('hover', !drag && !!e.target.closest('a, button, [data-hover], label, select, .tile, tr.click'));
   });
+}
+
+// muted background clips: play only while on screen, never with reduced motion
+export function autoVideos(root) {
+  const vids = $$('video[data-auto]', root);
+  if (reduced() || !('IntersectionObserver' in window)) { vids.forEach(v => v.pause()); return () => {}; }
+  const io = new IntersectionObserver(entries => entries.forEach(({ target: v, isIntersecting }) => {
+    if (isIntersecting) v.play()?.catch(() => {});
+    else v.pause();
+  }), { rootMargin: '120px' });
+  vids.forEach(v => { v.muted = true; io.observe(v); });
+  return () => { io.disconnect(); vids.forEach(v => v.pause()); };
 }
 
 export function startLenis() {

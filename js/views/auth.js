@@ -1,16 +1,15 @@
 import { db, save, uid, norm, session, userByEmail, userById, hashPassword, verifyPassword, issueCode, checkCode, codeSentAt, lockedFor, loginFailed, loginOk, audit, currentUser } from '../store.js';
-import { $, esc, go, icon, toast, openModal, fieldError, clearErrors, formError, validEmail, pwScore, bindPasswordUI, pwField, bindCodeInputs, codeInputsHTML, setBusy, maskEmail, demoNote } from '../ui.js';
+import { $, esc, vid, go, icon, toast, openModal, fieldError, clearErrors, formError, validEmail, pwScore, bindPasswordUI, pwField, bindCodeInputs, codeInputsHTML, setBusy, maskEmail, demoNote } from '../ui.js';
 import { sendMail, wrapMail, openInbox } from '../mail.js';
-import { enter, drawSvg, magnetic } from '../fx.js';
-import { COURT } from './home.js';
+import { enter, magnetic, autoVideos } from '../fx.js';
 
 const STEPS = ['Create account', 'Confirm email', 'Add children', 'Give consent'];
 
-function layout(main, { kicker, title, text, step, card }) {
+function layout(main, { kicker, title, text, step, card, media = 'parent' }) {
   main.innerHTML = `<div class="app-bg"></div>
   <section class="auth">
     <div class="auth-art">
-      ${COURT}
+      <div class="art-media">${vid(media, { preload: 'auto' })}</div>
       <span class="eyebrow">${kicker}</span>
       <h1>${title}</h1>
       <p>${text}</p>
@@ -18,9 +17,9 @@ function layout(main, { kicker, title, text, step, card }) {
     </div>
     <div class="auth-side"><div class="card auth-card">${card}</div></div>
   </section>`;
-  drawSvg($('.court', main), { duration: 2.4, stagger: .05 });
-  enter(main, '.auth-art > *:not(.court), .auth-card > *', { stagger: .05 });
+  enter(main, '.auth-art > *:not(.art-media), .auth-card > *', { stagger: .05 });
   magnetic(main);
+  return autoVideos(main);
 }
 
 async function sendVerifyCode(user) {
@@ -37,6 +36,7 @@ export async function renderRegister(main) {
   const me = currentUser('parent');
   if (me) { go('portal'); return; }
   layout(main, {
+    media: 'parent',
     kicker: 'Join the club',
     title: 'Sign up in<br>two minutes.',
     text: 'One parent account for the whole family. Add every child, give consent once, and get a copy by email.',
@@ -117,6 +117,7 @@ export async function renderVerify(main) {
   const user = s?.pending && userById(s.pending);
   if (!user) { go('register'); return; }
   layout(main, {
+    media: 'sign',
     kicker: 'Almost there',
     title: 'Check your<br>inbox.',
     text: `We sent a 6-digit code to ${esc(maskEmail(user.email))}. It works once and expires in 15 minutes.`,
@@ -174,6 +175,7 @@ export async function renderVerify(main) {
 export async function renderLogin(main) {
   if (currentUser('parent')) { go('portal'); return; }
   layout(main, {
+    media: 'team',
     kicker: 'Parent portal',
     title: 'Welcome<br>back.',
     text: 'Log in to manage your children, consent and data. Five wrong attempts pause the account for a minute.',
@@ -223,6 +225,7 @@ export async function renderLogin(main) {
 /* ---------------- forgot password ---------------- */
 export async function renderForgot(main) {
   layout(main, {
+    media: 'parent',
     kicker: 'Reset password',
     title: 'Locked out?<br>No problem.',
     text: 'Enter your email and we send a code. For privacy, we never reveal whether an address is registered.',

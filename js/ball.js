@@ -17,9 +17,9 @@ function seam(ctx, x0, color, width) {
   ctx.strokeStyle = color; ctx.lineWidth = width; ctx.stroke();
 }
 const DESIGN = [
-  { y: 512, amp: 190, freq: 1, phase: 0, w: 230, color: '#FF5A1F' },
-  { y: 512, amp: 190, freq: 1, phase: 0, w: 70, color: '#FF8A3D' },
-  { y: 512, amp: 210, freq: 1, phase: Math.PI, w: 150, color: '#0B1430' },
+  { y: 512, amp: 190, freq: 1, phase: 0, w: 230, color: '#FF6A2A' },
+  { y: 512, amp: 190, freq: 1, phase: 0, w: 70, color: '#FF9354' },
+  { y: 512, amp: 210, freq: 1, phase: Math.PI, w: 150, color: '#1F4FFF' },
   { y: 512, amp: 210, freq: 1, phase: Math.PI, w: 18, color: '#F3F1EC' }
 ];
 const SEAMS = [256, 768, 1280, 1792];
@@ -35,8 +35,8 @@ function colorMap() {
   ctx.font = '800 64px Archivo, "Segoe UI", sans-serif';
   ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
   [[TW * .25, 300], [TW * .75, 724]].forEach(([x, y]) => {
-    ctx.fillStyle = '#0B1430'; ctx.fillText('KAMPKLAR', x, y);
-    ctx.fillStyle = '#FF5A1F'; ctx.fillRect(x - 150, y + 40, 300, 6);
+    ctx.fillStyle = '#0B1B36'; ctx.fillText('KAMPKLAR', x, y);
+    ctx.fillStyle = '#FF6A2A'; ctx.fillRect(x - 150, y + 40, 300, 6);
   });
   const t = new THREE.CanvasTexture(c);
   t.colorSpace = THREE.SRGBColorSpace;
@@ -89,14 +89,14 @@ export function mountBall(canvas, wrap) {
   }
   const pg = new THREE.BufferGeometry();
   pg.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-  const ring = new THREE.Points(pg, new THREE.PointsMaterial({ color: 0xFF8A3D, size: .022, transparent: true, opacity: .75, depthWrite: false }));
+  const ring = new THREE.Points(pg, new THREE.PointsMaterial({ color: 0x1F4FFF, size: .026, transparent: true, opacity: .55, depthWrite: false }));
   ring.rotation.set(1.2, 0, .35);
   root.add(ring);
 
-  scene.add(new THREE.HemisphereLight(0xC8D6FF, 0x22100A, .55));
+  scene.add(new THREE.HemisphereLight(0xEAF2FF, 0x8090B0, 1.1));
   const key = new THREE.DirectionalLight(0xffffff, 2.6); key.position.set(3, 4, 5); scene.add(key);
-  const rimA = new THREE.PointLight(0xFF5A1F, 40, 12); rimA.position.set(-3.2, -1.4, -1.5); scene.add(rimA);
-  const rimB = new THREE.PointLight(0x5B8CFF, 26, 12); rimB.position.set(3.4, -2, -2.2); scene.add(rimB);
+  const rimA = new THREE.PointLight(0xFF9354, 26, 12); rimA.position.set(-3.2, -1.4, -1.5); scene.add(rimA);
+  const rimB = new THREE.PointLight(0x8FD3FF, 34, 12); rimB.position.set(3.4, -2, -2.2); scene.add(rimB);
 
   const resize = () => {
     const { width, height } = wrap.getBoundingClientRect();
